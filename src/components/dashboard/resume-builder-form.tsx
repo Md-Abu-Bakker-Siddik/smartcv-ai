@@ -2,11 +2,12 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  initialResumeFormState,
-  saveResumeAction,
-  type ResumeFormState,
-} from "@/app/dashboard/actions";
+import { saveResumeAction, type ResumeFormState } from "@/app/dashboard/actions";
+
+const initialResumeFormState: ResumeFormState = {
+  status: "idle",
+  message: "",
+};
 
 function SubmitButton() {
   return (

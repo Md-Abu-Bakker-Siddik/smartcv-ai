@@ -21,11 +21,6 @@ export type ResumeFormState = {
   message: string;
 };
 
-export const initialResumeFormState: ResumeFormState = {
-  status: "idle",
-  message: "",
-};
-
 function makeSlug(title: string) {
   return title
     .trim()
