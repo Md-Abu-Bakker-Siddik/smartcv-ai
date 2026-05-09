@@ -1,22 +1,15 @@
-const demoPosts = [
-  {
-    title: "How to Improve ATS Score in 15 Minutes",
-    excerpt:
-      "A practical checklist to improve resume readability, keyword coverage, and structure.",
-  },
-  {
-    title: "Resume Mistakes That Get Ignored by Recruiters",
-    excerpt:
-      "Avoid common formatting and content issues that reduce interview callbacks.",
-  },
-  {
-    title: "Write Better Project Bullets for Developer Roles",
-    excerpt:
-      "Turn generic responsibilities into measurable achievements with impact.",
-  },
-];
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const supabase = await createClient();
+  const { data: posts } = await supabase
+    .from("blog_posts")
+    .select("id, title, slug, excerpt, published_at")
+    .eq("is_published", true)
+    .order("published_at", { ascending: false })
+    .limit(20);
+
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-10 text-slate-100 md:px-10">
       <div className="mx-auto max-w-5xl">
@@ -29,15 +22,27 @@ export default function BlogPage() {
         </p>
 
         <section className="mt-8 grid gap-4">
-          {demoPosts.map((post) => (
+          {posts?.length ? (
+            posts.map((post) => (
+              <Link
+                key={post.id}
+                href={`/blog/${post.slug}`}
+                className="rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
+              >
+                <h2 className="text-xl font-medium">{post.title}</h2>
+                <p className="mt-2 text-sm text-slate-300">{post.excerpt}</p>
+              </Link>
+            ))
+          ) : (
             <article
-              key={post.title}
               className="rounded-2xl border border-white/10 bg-white/5 p-5"
             >
-              <h2 className="text-xl font-medium">{post.title}</h2>
-              <p className="mt-2 text-sm text-slate-300">{post.excerpt}</p>
+              <h2 className="text-xl font-medium">No blog posts yet</h2>
+              <p className="mt-2 text-sm text-slate-300">
+                Publish a post from admin dashboard to show it here.
+              </p>
             </article>
-          ))}
+          )}
         </section>
       </div>
     </main>

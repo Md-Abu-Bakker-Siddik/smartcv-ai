@@ -1,3 +1,5 @@
+import { ThemeToggle } from "@/components/theme-toggle";
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -11,12 +13,21 @@ export default function Home() {
               Build job-winning resumes in minutes
             </h1>
           </div>
-          <a
-            href="/dashboard"
-            className="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-5 py-2 text-sm font-medium text-cyan-200 transition hover:bg-cyan-300/20"
-          >
-            Open Dashboard
-          </a>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <a
+              href="/sign-in"
+              className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
+            >
+              Sign In
+            </a>
+            <a
+              href="/dashboard"
+              className="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-5 py-2 text-sm font-medium text-cyan-200 transition hover:bg-cyan-300/20"
+            >
+              Open Dashboard
+            </a>
+          </div>
         </header>
 
         <section className="grid gap-6 md:grid-cols-3">
