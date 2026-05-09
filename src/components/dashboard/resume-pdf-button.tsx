@@ -133,14 +133,15 @@ export function ResumePdfButton({ resumes }: Props) {
       doc.setFontSize(10);
       doc.setTextColor(20, 27, 45);
       const contactLines = [
-        address || "Address not provided",
-        phone || "Phone not provided",
-        email,
+        `Address: ${address || "Not provided"}`,
+        `Phone: ${phone || "Not provided"}`,
+        `Email: ${email}`,
       ];
       doc.text(contactLines, 132, 22);
 
-      let leftY = 54;
-      let rightY = 54;
+      // Add more breathing room below the header block.
+      let leftY = 60;
+      let rightY = 60;
       const leftX = 16;
       const rightX = 132;
       const leftWidth = 104;
