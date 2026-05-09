@@ -13,6 +13,7 @@ const errorMessages: Record<string, string> = {
 
 const successMessages: Record<string, string> = {
   check_email: "Account created. Please confirm your email, then sign in.",
+  confirmation_sent: "Confirmation email sent again. Please verify your inbox/spam.",
 };
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {

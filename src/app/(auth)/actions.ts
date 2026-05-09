@@ -30,7 +30,8 @@ export async function signUpAction(formData: FormData) {
     if (error.message.toLowerCase().includes("already registered")) {
       redirect("/sign-up?error=email_exists");
     }
-    redirect("/sign-up?error=signup_failed");
+    const safeMessage = encodeURIComponent(error.message.slice(0, 160));
+    redirect(`/sign-up?error=signup_failed&detail=${safeMessage}`);
   }
 
   if (!data.session) {
@@ -55,7 +56,11 @@ export async function signInAction(formData: FormData) {
 
   if (error) {
     if (error.message.toLowerCase().includes("email not confirmed")) {
-      redirect("/sign-in?error=email_not_confirmed");
+      await supabase.auth.resend({
+        type: "signup",
+        email: parsed.data.email,
+      });
+      redirect("/sign-in?error=email_not_confirmed&success=confirmation_sent");
     }
     redirect("/sign-in?error=invalid_credentials");
   }

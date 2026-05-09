@@ -2,7 +2,7 @@ import Link from "next/link";
 import { signUpAction } from "@/app/(auth)/actions";
 
 type SignUpPageProps = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; detail?: string }>;
 };
 
 const errorMessages: Record<string, string> = {
@@ -13,7 +13,12 @@ const errorMessages: Record<string, string> = {
 
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   const params = await searchParams;
-  const errorMessage = params.error ? errorMessages[params.error] : null;
+  const baseErrorMessage = params.error ? errorMessages[params.error] : null;
+  const detailMessage = params.detail ? decodeURIComponent(params.detail) : null;
+  const errorMessage =
+    params.error === "signup_failed" && detailMessage
+      ? `${baseErrorMessage} (${detailMessage})`
+      : baseErrorMessage;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 p-6 text-slate-100">
