@@ -18,7 +18,9 @@ export default async function DashboardPage() {
 
   const { data: resumes } = await supabase
     .from("resumes")
-    .select("id, title, ats_score, keyword_match_score, created_at")
+    .select(
+      "id, title, ats_score, keyword_match_score, personal_info, professional_summary, skills, work_experience, education, projects, certifications, created_at",
+    )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(5);
@@ -89,6 +91,13 @@ export default async function DashboardPage() {
                   title: resume.title,
                   ats: resume.ats_score,
                   keyword: resume.keyword_match_score,
+                  personalInfo: resume.personal_info,
+                  summary: resume.professional_summary,
+                  skills: resume.skills,
+                  workExperience: resume.work_experience,
+                  education: resume.education,
+                  projects: resume.projects,
+                  certifications: resume.certifications,
                 })) ?? []
               }
             />
