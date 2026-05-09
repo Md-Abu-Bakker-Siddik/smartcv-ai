@@ -24,10 +24,17 @@ export async function signUpAction(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp(parsed.data);
+  const { data, error } = await supabase.auth.signUp(parsed.data);
 
   if (error) {
+    if (error.message.toLowerCase().includes("already registered")) {
+      redirect("/sign-up?error=email_exists");
+    }
     redirect("/sign-up?error=signup_failed");
+  }
+
+  if (!data.session) {
+    redirect("/sign-in?success=check_email");
   }
 
   redirect("/dashboard");
@@ -47,6 +54,9 @@ export async function signInAction(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
+    if (error.message.toLowerCase().includes("email not confirmed")) {
+      redirect("/sign-in?error=email_not_confirmed");
+    }
     redirect("/sign-in?error=invalid_credentials");
   }
 

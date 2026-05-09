@@ -1,7 +1,25 @@
 import Link from "next/link";
 import { signInAction } from "@/app/(auth)/actions";
 
-export default function SignInPage() {
+type SignInPageProps = {
+  searchParams: Promise<{ error?: string; success?: string }>;
+};
+
+const errorMessages: Record<string, string> = {
+  invalid_input: "Please enter a valid email and password.",
+  invalid_credentials: "Email or password is incorrect.",
+  email_not_confirmed: "Email not confirmed. Please verify your email first.",
+};
+
+const successMessages: Record<string, string> = {
+  check_email: "Account created. Please confirm your email, then sign in.",
+};
+
+export default async function SignInPage({ searchParams }: SignInPageProps) {
+  const params = await searchParams;
+  const errorMessage = params.error ? errorMessages[params.error] : null;
+  const successMessage = params.success ? successMessages[params.success] : null;
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 p-6 text-slate-100">
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-6">
@@ -9,6 +27,16 @@ export default function SignInPage() {
         <p className="mt-2 text-sm text-slate-300">
           Continue building your resume and ATS optimization workflow.
         </p>
+        {errorMessage ? (
+          <p className="mt-4 rounded-lg border border-red-400/40 bg-red-400/10 px-3 py-2 text-sm text-red-200">
+            {errorMessage}
+          </p>
+        ) : null}
+        {successMessage ? (
+          <p className="mt-4 rounded-lg border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-sm text-emerald-200">
+            {successMessage}
+          </p>
+        ) : null}
 
         <form action={signInAction} className="mt-6 space-y-4">
           <div>
