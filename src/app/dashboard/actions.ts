@@ -16,6 +16,16 @@ const resumeSchema = z.object({
   jobDescription: z.string().min(10, "Paste a job description."),
 });
 
+export type ResumeFormState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
+
+export const initialResumeFormState: ResumeFormState = {
+  status: "idle",
+  message: "",
+};
+
 function makeSlug(title: string) {
   return title
     .trim()
@@ -24,7 +34,10 @@ function makeSlug(title: string) {
     .replace(/(^-|-$)/g, "");
 }
 
-export async function saveResumeAction(formData: FormData) {
+export async function saveResumeAction(
+  _prevState: ResumeFormState,
+  formData: FormData,
+): Promise<ResumeFormState> {
   const parsed = resumeSchema.safeParse({
     title: formData.get("title"),
     fullName: formData.get("fullName"),
@@ -36,8 +49,10 @@ export async function saveResumeAction(formData: FormData) {
   });
 
   if (!parsed.success) {
-    revalidatePath("/dashboard");
-    return;
+    return {
+      status: "error",
+      message: parsed.error.issues[0]?.message ?? "Invalid form data.",
+    };
   }
 
   const supabase = await createClient();
@@ -46,14 +61,18 @@ export async function saveResumeAction(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    revalidatePath("/dashboard");
-    return;
+    return {
+      status: "error",
+      message: "Please sign in again and retry.",
+    };
   }
 
   const usage = await canUseFeature(user.id, "resume_save");
   if (!usage.allowed) {
-    revalidatePath("/dashboard");
-    return;
+    return {
+      status: "error",
+      message: "Daily free-plan resume limit reached. Try again tomorrow.",
+    };
   }
 
   const skillList = parsed.data.skills
@@ -98,8 +117,10 @@ export async function saveResumeAction(formData: FormData) {
   });
 
   if (error) {
-    revalidatePath("/dashboard");
-    return;
+    return {
+      status: "error",
+      message: `Save failed: ${error.message}`,
+    };
   }
 
   await supabase.from("usage_logs").insert({
@@ -110,4 +131,8 @@ export async function saveResumeAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard");
+  return {
+    status: "success",
+    message: `Resume saved successfully. ATS score: ${score.total}/100.`,
+  };
 }

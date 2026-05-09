@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { signOutAction } from "@/app/(auth)/actions";
-import { saveResumeAction } from "@/app/dashboard/actions";
 import { createClient } from "@/lib/supabase/server";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ResumePdfButton } from "@/components/dashboard/resume-pdf-button";
+import { ResumeBuilderForm } from "@/components/dashboard/resume-builder-form";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -53,59 +53,7 @@ export default async function DashboardPage() {
             Save a resume draft and get instant rule-based ATS scoring.
           </p>
 
-          <form action={saveResumeAction} className="mt-6 grid gap-4 md:grid-cols-2">
-            <input
-              name="title"
-              required
-              placeholder="Resume title (e.g. Frontend Engineer Resume)"
-              className="rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm"
-            />
-            <input
-              name="fullName"
-              required
-              placeholder="Full name"
-              className="rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm"
-            />
-            <input
-              name="email"
-              type="email"
-              required
-              placeholder="Email"
-              className="rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm"
-            />
-            <input
-              name="experienceYears"
-              type="number"
-              min={0}
-              max={40}
-              required
-              placeholder="Experience (years)"
-              className="rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm"
-            />
-            <input
-              name="skills"
-              required
-              placeholder="Skills (comma separated)"
-              className="rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm md:col-span-2"
-            />
-            <textarea
-              name="summary"
-              required
-              placeholder="Professional summary"
-              rows={4}
-              className="rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm md:col-span-2"
-            />
-            <textarea
-              name="jobDescription"
-              required
-              placeholder="Paste target job description for keyword matching"
-              rows={5}
-              className="rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm md:col-span-2"
-            />
-            <button className="rounded-lg bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-300 md:col-span-2">
-              Save Resume Draft
-            </button>
-          </form>
+          <ResumeBuilderForm />
         </section>
 
         <section className="mt-8 grid gap-3 md:grid-cols-3">
